@@ -1,0 +1,90 @@
+/* @import url() FONT IMPORTS MUST ALWAYS BE AT THE VERY TOP OF THIS FILE, ABOVE THE TAILWIND IMPORTS — DO NOT DELETE THIS COMMENT */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+
+/* CRITICAL: THE FOLLOWING TAILWIND IMPORTS MUST NEVER BE DELETED OR REORDERED — DO NOT DELETE THIS COMMENT */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* END TAILWIND IMPORTS — ALL OTHER CSS MUST GO BELOW THIS LINE */
+
+:root {
+  --gm-bg: #FDFBF7;
+  --gm-bg-soft: #F5F2EB;
+  --gm-surface: #FFFFFF;
+  --gm-surface-glass: rgba(255, 255, 255, 0.85);
+  --gm-primary: #E8A88B;
+  --gm-primary-hover: #D99679;
+  --gm-accent: #E5DCC3;
+  --gm-text: #2C2A28;
+  --gm-text-muted: #7A756D;
+  --gm-border: #EAE5D9;
+  --gm-shadow-soft: 0 10px 40px -10px rgba(232, 168, 139, 0.08);
+  --gm-radius-sm: 0.25rem;
+  --gm-radius-md: 0.5rem;
+  --gm-radius-lg: 1rem;
+  --gm-radius-xl: 1.5rem;
+}
+@theme {
+  --color-gm-bg: var(--gm-bg);
+  --color-gm-bg-soft: var(--gm-bg-soft);
+  --color-gm-surface: var(--gm-surface);
+  --color-gm-surface-glass: var(--gm-surface-glass);
+  --color-gm-primary: var(--gm-primary);
+  --color-gm-primary-hover: var(--gm-primary-hover);
+  --color-gm-accent: var(--gm-accent);
+  --color-gm-text: var(--gm-text);
+  --color-gm-text-muted: var(--gm-text-muted);
+  --color-gm-border: var(--gm-border);
+  --radius-gm-sm: var(--gm-radius-sm);
+  --radius-gm-md: var(--gm-radius-md);
+  --radius-gm-lg: var(--gm-radius-lg);
+  --radius-gm-xl: var(--gm-radius-xl);
+  --shadow-gm-soft: var(--gm-shadow-soft);
+}
+@layer components {
+  .gm-container {
+    @apply max-w-[1440px] mx-auto px-4 md:px-8 lg:px-12 w-full;
+  }
+  .gm-section {
+    @apply py-12 md:py-16 lg:py-24;
+  }
+  .gm-glass-panel {
+    @apply bg-gm-surface-glass backdrop-blur-md border border-white/20 shadow-gm-soft;
+  }
+  .gm-liquid-button {
+    @apply inline-flex items-center justify-center bg-gm-primary text-white px-8 py-3.5 rounded-gm-md font-medium transition-all duration-300 ease-out hover:bg-gm-primary-hover hover:shadow-gm-soft hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .gm-card-hover {
+    @apply transition-transform duration-700 ease-out hover:scale-105;
+  }
+  .gm-focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gm-primary focus-visible:ring-offset-2;
+  }
+}
+body {
+  background-color: var(--gm-bg);
+  color: var(--gm-text);
+  font-family: 'Inter', sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', serif;
+}
+@keyframes gmFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-fade-in {
+  animation: gmFadeIn 0.5s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in {
+    animation: none;
+  }
+}
