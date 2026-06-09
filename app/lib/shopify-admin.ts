@@ -35,7 +35,7 @@ export async function shopifyAdminFetch<T>(
   );
 
   const MAX_RETRIES = 3;
-  let lastError: any;
+  let lastError: unknown;
 
   for (let i = 0; i <= MAX_RETRIES; i++) {
     try {
@@ -47,7 +47,7 @@ export async function shopifyAdminFetch<T>(
           'User-Agent': 'noor-original-app/1.0',
         },
         body: JSON.stringify({ query, variables }),
-        // @ts-ignore
+        // @ts-expect-error - keepalive is not in RequestInit but supported in some Node versions
         keepalive: false,
       });
 
@@ -63,10 +63,10 @@ export async function shopifyAdminFetch<T>(
       }
 
       return json.data as T;
-    } catch (error: any) {
+    } catch (error: unknown) {
       lastError = error;
-      const errorMsg = error.message || '';
-      const isSocketError = error.code === 'UND_ERR_SOCKET' || 
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      const isSocketError = (error && typeof error === 'object' && 'code' in error && error.code === 'UND_ERR_SOCKET') || 
                            errorMsg.includes('socket') || 
                            errorMsg.includes('fetch failed') ||
                            errorMsg.includes('other side closed');

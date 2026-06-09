@@ -57,7 +57,7 @@ for (const env of envs) {
         cwd: rootDir,
       });
       ok += 1;
-    } catch (e) {
+    } catch (_e) {
       fail += 1;
     }
   }

@@ -26,7 +26,7 @@ export async function shopifyFetch<T>(
   noStore(); // Opt-out of caching for all fetches by default
 
   const MAX_RETRIES = 3;
-  let lastError: any;
+  let lastError: unknown;
 
   for (let i = 0; i <= MAX_RETRIES; i++) {
     try {
@@ -39,7 +39,7 @@ export async function shopifyFetch<T>(
         },
         body: JSON.stringify({ query, variables }),
         next: { tags }, // Add cache tags for revalidation
-        // @ts-ignore - Disable keepalive to avoid socket closure issues
+        // @ts-expect-error - Disable keepalive to avoid socket closure issues
         keepalive: false,
       });
 
@@ -55,10 +55,10 @@ export async function shopifyFetch<T>(
       }
 
       return json.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       lastError = error;
-      const errorMsg = error.message || '';
-      const isSocketError = error.code === 'UND_ERR_SOCKET' || 
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      const isSocketError = (error && typeof error === 'object' && 'code' in error && error.code === 'UND_ERR_SOCKET') || 
                            errorMsg.includes('socket') || 
                            errorMsg.includes('fetch failed') ||
                            errorMsg.includes('other side closed');
