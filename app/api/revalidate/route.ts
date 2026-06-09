@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import { revalidateTag } from 'next/cache'
 import { getRevalidationSecret } from '../../lib/env'
 
 export async function POST(request: NextRequest) {

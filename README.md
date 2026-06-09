@@ -10,7 +10,7 @@ vercel env pull .env.local --environment=development --yes   # requires Vercel l
 npm run dev
 ```
 
-Open http://localhost:3000
+Open http://localhost:3001
 
 ## Docs
 

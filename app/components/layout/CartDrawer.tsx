@@ -2,32 +2,26 @@
 import React from 'react';
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { LiquidButton } from '../ui/LiquidButton';
-import { clsx } from 'clsx';
-
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
+  if (!isOpen) return null;
+
   return (
     <>
       {/* Backdrop */}
       <div
-        className={clsx(
-          'fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] transition-opacity duration-300',
-          isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-        )}
+        className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Drawer */}
       <div
-        className={clsx(
-          'fixed top-0 right-0 h-full w-full max-w-md bg-gm-bg shadow-2xl z-[70] transform transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col',
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        )}
+        className="fixed top-0 right-0 z-[70] flex h-full w-full max-w-md translate-x-0 transform flex-col bg-gm-bg shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
         role="dialog"
         aria-modal="true"
         aria-label="Nákupný košík"

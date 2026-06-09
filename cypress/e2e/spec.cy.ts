@@ -1,7 +1,7 @@
 describe('E-commerce Flow', () => {
   it('should allow a user to navigate to the product page, add a product to the cart, and see the cart update', () => {
     // 1. Visit the homepage
-    cy.visit('http://localhost:3000');
+    cy.visit('http://localhost:3001');
 
     // 2. Check for the main heading
     cy.get('h1').contains('Prémiové doplnky výživy');

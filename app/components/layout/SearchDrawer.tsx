@@ -1,30 +1,24 @@
 'use client';
 import React from 'react';
 import { X, Search } from 'lucide-react';
-import { clsx } from 'clsx';
-
 interface SearchDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 export const SearchDrawer = ({ isOpen, onClose }: SearchDrawerProps) => {
+  if (!isOpen) return null;
+
   return (
     <>
       <div
-        className={clsx(
-          'fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] transition-opacity duration-300',
-          isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-        )}
+        className="fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
         aria-hidden="true"
       />
 
       <div
-        className={clsx(
-          'fixed top-0 left-0 w-full bg-gm-surface shadow-md z-[70] transform transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]',
-          isOpen ? 'translate-y-0' : '-translate-y-full'
-        )}
+        className="fixed top-0 left-0 z-[70] w-full translate-y-0 transform bg-gm-surface shadow-md transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
         role="dialog"
         aria-modal="true"
         aria-label="Vyhľadávanie"

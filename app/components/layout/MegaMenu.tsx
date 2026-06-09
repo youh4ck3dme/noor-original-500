@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import { clsx } from 'clsx';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link'; // Import Link for navigation
@@ -15,20 +14,22 @@ interface ShopifyCollection {
 interface MegaMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  collections: ShopifyCollection[]; // Accept collections as a prop
+  onMouseEnter?: () => void;
+  collections: ShopifyCollection[];
 }
 
-export const MegaMenu = ({ isOpen, onClose, collections }: MegaMenuProps) => {
+export const MegaMenu = ({ isOpen, onClose, onMouseEnter, collections }: MegaMenuProps) => {
   if (!isOpen) return null;
 
   return (
     <div
-      className="absolute top-full left-0 w-full bg-gm-surface shadow-gm-soft border-t border-gm-border overflow-hidden transition-all duration-300 ease-in-out origin-top"
+      className="absolute top-full left-0 right-0 w-full bg-gm-surface shadow-gm-soft border-t border-gm-border overflow-hidden transition-all duration-300 ease-in-out origin-top"
+      onMouseEnter={onMouseEnter}
       onMouseLeave={onClose}
     >
       <div className="gm-container py-12">
-        <div className="grid grid-cols-4 gap-8">
-          <div className="col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="md:col-span-1">
             <h3 className="text-xl font-heading mb-6 text-gm-text">Nakupovať podľa</h3>
             <ul className="space-y-4">
               <li>
@@ -49,7 +50,7 @@ export const MegaMenu = ({ isOpen, onClose, collections }: MegaMenuProps) => {
             </Link>
           </div>
 
-          <div className="col-span-3 grid grid-cols-3 gap-6">
+          <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="group cursor-pointer">
               <div className="relative aspect-[4/3] rounded-gm-md overflow-hidden mb-4">
                 <Image

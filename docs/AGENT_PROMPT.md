@@ -30,14 +30,27 @@ Nastav a udržuj projekt tak, aby lokálne fungoval `npm run dev` bez chýb.
    - SHOPIFY_API_ENDPOINT_URL = https://{SHOPIFY_STORE_DOMAIN}/api/{SHOPIFY_API_VERSION}/graphql.json
    - NEXT_PUBLIC_DEFAULT_THEME=noor
    - NEXT_PUBLIC_HIDE_THEME_SWITCHER=1
-   - NEXT_PUBLIC_SITE_URL=http://localhost:3000
+   - NEXT_PUBLIC_SITE_URL=http://localhost:3001
    - NEXT_PUBLIC_FIREBASE_* (6 premenných z Firebase Console)
+   - GEMINI_API_KEY, MISTRAL_API_KEY
+   - MISTRAL_USE_WORKFLOW=0 (1 ak beží workflow worker)
+   - MISTRAL_WORKFLOW_IDENTIFIER=noor-pharmacist-chat
 
-3. Spusti a over:
+3. Mistral Workflows (voliteľné, pre chat fallback cez worker):
+   ```bash
+   cp workflows/noor-pharmacist/.env.example workflows/noor-pharmacist/.env
+   # doplň MISTRAL_API_KEY do workflows/noor-pharmacist/.env
+   npm run workflow:worker
+   ```
+   V druhom termináli: `MISTRAL_USE_WORKFLOW=1 npm run dev`
+
+4. Vibe CLI skill: `.vibe/skills/noor-pharmacist/SKILL.md` → `vibe` + `/noor-pharmacist`
+
+5. Spusti a over:
    ```bash
    rm -rf .next
    npm run dev
-   curl -s -o /dev/null -w "%{http_code}" http://localhost:3000
+   curl -s -o /dev/null -w "%{http_code}" http://localhost:3001
    ```
    Očakávaný výsledok: 200
 
@@ -87,7 +100,9 @@ Fix NOOR Original 500 local dev at /Users/erikbabcan/noor-original-500.
 1. npm install (eslint ^9, autoprefixer present)
 2. vercel env pull .env.local from h4ck3d/growmedicanextjs development
 3. Ensure SHOPIFY_API_ENDPOINT_URL and Firebase NEXT_PUBLIC_* in .env.local
-4. rm -rf .next && npm run dev — homepage must return 200
+4. npm test && npm run build
+5. rm -rf .next && npm run dev — homepage must return 200
 
 Do not commit secrets. Update docs/SETUP.md if steps change.
+Mistral: workflow worker `npm run workflow:worker`, env `MISTRAL_USE_WORKFLOW=1`.
 ```

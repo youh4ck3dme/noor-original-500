@@ -61,6 +61,16 @@ npm run dev
 
 Otvor http://localhost:3001
 
+## Testy
+
+Projekt používa **Vitest** (Next.js nemá vstavaný unit test runner). Default `npm test` beží len na testoch v `app/` — reálny kód storefrontu a AI chat.
+
+```bash
+npm test        # app/ unit testy (AI providers, API route, chat widget)
+npm run test:ai # len AI modul
+npm run test:legacy  # stará šablóna v tests/ (nie je súčasť default CI)
+```
+
 ## Časté problémy
 
 | Problém | Riešenie |
@@ -71,11 +81,102 @@ Otvor http://localhost:3001
 | Shopify env not set | Skontroluj `.env.local` a `SHOPIFY_API_ENDPOINT_URL` |
 | TS: `node_modules/.pnpm/@types/...` not found | `rm -rf node_modules && npm ci`, potom **TypeScript: Restart TS Server** |
 
+## AI chat (Gemini → Mistral fallback)
+
+Portované z `growmedicanextjs` (farmaceut persona + chat UI), s Gemini ako primárnym providerom.
+
+Do `.env.local` doplň:
+
+```env
+GEMINI_API_KEY=tvoj_kľúč_z_AI_Studio
+GEMINI_MODEL=gemini-2.0-flash
+MISTRAL_API_KEY=...          # Mistral Console / Vercel pull
+MISTRAL_API_KEY_BACKUP=...   # voliteľné
+MISTRAL_USE_WORKFLOW=0       # 1 = skúsi workflow pred chat/completions
+MISTRAL_WORKFLOW_IDENTIFIER=noor-pharmacist-chat
+MISTRAL_WORKFLOW_TIMEOUT_SECONDS=30
+```
+
+Logika: `app/lib/ai/providers.ts` — Gemini primárne, potom Mistral (workflow ak beží worker, inak chat/completions API).
+
+Endpoint: `POST /api/chat` · Widget: plávajúce tlačidlo vpravo dole.
+
+## Mistral Workflows + Vibe
+
+**Požiadavky:** Python 3.12+, [uv](https://docs.astral.sh/uv/) (`uvx`).
+
+```bash
+# Jednorazový scaffold (API kľúč len lokálne, nie do gitu)
+npm run workflow:setup
+
+# Worker (samostatný terminál, nechaj bežať)
+npm run workflow:worker
+
+# Next.js + chat widget
+MISTRAL_USE_WORKFLOW=1 npm run dev
+```
+
+**Vibe CLI** (terminálový dev asistent, nie web widget):
+
+```bash
+curl -LsSf https://mistral.ai/vibe/install.sh | bash
+vibe --setup
+vibe    # v root projekte, skill /noor-pharmacist
+```
+
+Skill: [`.vibe/skills/noor-pharmacist/SKILL.md`](../.vibe/skills/noor-pharmacist/SKILL.md)
+
+## Push notifikácie (Firebase FCM)
+
+**Požiadavky:** Firebase projekt s Firestore + Web Push certifikátom.
+
+Automatická príprava env (po `vercel env pull`):
+
+```bash
+npm run setup:push-env
+```
+
+Skript doplní Firebase public config, VAPID key, `PUSH_SEND_SECRET`, Shopify endpoint a NOOR theme vars.
+
+Service account (jednorazovo):
+
+1. Firebase Console → Project settings → Service accounts → **Generate new private key**
+2. Ulož ako `.firebase-service-account.json` v root projekte (gitignored)
+3. Znova spusti `npm run setup:push-env`
+
+Alternatíva: `FIREBASE_SERVICE_ACCOUNT_JSON` celý JSON na jednom riadku v `.env.local`.
+
+1. Firebase Console → Firestore → vytvor databázu (client nepíše priamo, len cez API).
+2. Vygeneruj service worker z env:
+
+```bash
+npm run generate:firebase-sw
+npm run dev
+```
+
+4. V prehliadači na http://localhost:3001 klikni **Povoliť** v push banneri.
+5. Test odoslania:
+
+```bash
+curl -X POST http://localhost:3001/api/push/send \
+  -H "Content-Type: application/json" \
+  -H "x-push-secret: $PUSH_SEND_SECRET" \
+  -d '{"title":"GrowMedica","body":"Test push notifikácie","url":"/"}'
+```
+
+6. Voliteľne: Firebase Console → Messaging → Send test message (FCM token z DevTools Network po subscribe).
+
+**Bezpečnosť:** VAPID private key a service account JSON nikdy necommituj. Po úniku rotuj kľúče vo Firebase Console.
+
 ## Štruktúra
 
 - `app/` — Next.js App Router (storefront)
 - `app/lib/shopify.ts` — Shopify Storefront API
-- `app/lib/firebase.ts` — Firebase init
+- `app/lib/firebase.ts` — Firebase client init
+- `app/lib/firebase-messaging.ts` — FCM subscribe (browser)
+- `app/lib/firebase-admin.ts` — server send + Firestore tokens
+- `public/firebase-messaging-sw.js` — background push handler
+- `app/lib/ai/` — Gemini + Mistral chat providers
 - `src/` — legacy komponenty a štýly
 
 ## Deploy

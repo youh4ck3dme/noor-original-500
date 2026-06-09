@@ -97,3 +97,24 @@ dist
 # Accidental pnpm artifacts (project uses npm)
 pnpm-lock.yaml
 pnpm-workspace.yaml
+
+# Mistral Workflows local secrets / Python env
+workflows/**/.env
+workflows/**/.venv/
+workflows/**/__pycache__/
+
+# Firebase push credentials (local notes, never commit)
+app/lib/ai/pushnotification.md
+.firebase-service-account.json
+
+# Magic Patterns reference copy (production DS lives in app/components/ds)
+design-system/
+
+# IDE workspace
+docs/*.code-workspace
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

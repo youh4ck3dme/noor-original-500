@@ -1,30 +1,26 @@
+'use client';
+
 import React from 'react';
-import { StorefrontProductCard } from '@/lib/theme/storefront-types';
-import { ProductCard } from './ProductCard';
-import { AddToCartLabels } from './AddToCartButton';
+import { ProductCard } from '@/app/components/ds/ProductCard';
+import { useCart } from '@/app/components/providers/CartProvider';
+import type { StorefrontProductCard } from '@/app/lib/theme/storefront-types';
+
 interface ProductGridProps {
   products: StorefrontProductCard[];
-  onAddToCart?: (payload: {
-    productId: string;
-    quantity: number;
-  }) => Promise<void> | void;
-  labels?: AddToCartLabels;
 }
-export const ProductGrid = ({
-  products,
-  onAddToCart,
-  labels
-}: ProductGridProps) => {
+
+export const ProductGrid = ({ products }: ProductGridProps) => {
+  const { addToCart } = useCart();
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-12">
-      {products.map((product) =>
-      <ProductCard
-        key={product.id}
-        product={product}
-        onAddToCart={onAddToCart}
-        labels={labels} />
-
-      )}
-    </div>);
-
+      {products.map((product) => (
+        <ProductCard
+          key={product.id}
+          product={product}
+          onAddToCart={addToCart}
+        />
+      ))}
+    </div>
+  );
 };

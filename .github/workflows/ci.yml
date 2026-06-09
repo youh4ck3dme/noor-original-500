@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      SHOPIFY_STORE_DOMAIN: example.myshopify.com
+      SHOPIFY_API_VERSION: 2025-01
+      SHOPIFY_API_ENDPOINT_URL: https://example.myshopify.com/api/2025-01/graphql.json
+      SHOPIFY_STOREFRONT_ACCESS_TOKEN: test-token
+      SHOPIFY_REVALIDATION_SECRET: test-secret
+      NEXT_PUBLIC_SITE_URL: http://localhost:3001
+      GEMINI_API_KEY: test-gemini
+      MISTRAL_API_KEY: test-mistral
+      PUSH_SEND_SECRET: test-push-secret
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm test
+
+      - run: npm run build
