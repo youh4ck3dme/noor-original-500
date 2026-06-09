@@ -39,7 +39,6 @@ export async function shopifyFetch<T>(
         },
         body: JSON.stringify({ query, variables }),
         next: { tags }, // Add cache tags for revalidation
-        // @ts-expect-error - Disable keepalive to avoid socket closure issues
         keepalive: false,
       });
 

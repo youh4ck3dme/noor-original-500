@@ -47,7 +47,6 @@ export async function shopifyAdminFetch<T>(
           'User-Agent': 'noor-original-app/1.0',
         },
         body: JSON.stringify({ query, variables }),
-        // @ts-expect-error - keepalive is not in RequestInit but supported in some Node versions
         keepalive: false,
       });
 
