@@ -1,7 +1,7 @@
 'use client';
 
 import { clsx } from 'clsx';
-import React, { useCallback, useState, createContext, useContext } from 'react';
+import React, { useCallback, useState, createContext, useContext, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -36,6 +36,7 @@ const accent = {
 };
 export const ToastProvider = ({ children }: {children: React.ReactNode;}) => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [mounted, setMounted] = useState(false);
   const remove = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
@@ -55,6 +56,9 @@ export const ToastProvider = ({ children }: {children: React.ReactNode;}) => {
     },
     [remove]
   );
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   return (
     <ToastContext.Provider
       value={{
@@ -62,7 +66,7 @@ export const ToastProvider = ({ children }: {children: React.ReactNode;}) => {
       }}>
       
       {children}
-      {typeof document !== 'undefined' &&
+      {mounted && typeof document !== 'undefined' &&
       createPortal(
         <div className="fixed bottom-4 right-4 z-[60] flex flex-col gap-2 w-full max-w-sm pointer-events-none">
             <AnimatePresence>
