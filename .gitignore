@@ -86,3 +86,10 @@ dist
 
 # Next.js build output
 .next
+.vercel
+
+# Env secrets (keep .env.example tracked)
+.env
+.env.local
+.env.*.local
+!.env.example
