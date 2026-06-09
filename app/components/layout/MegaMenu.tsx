@@ -57,6 +57,7 @@ export const MegaMenu = ({ isOpen, onClose, onMouseEnter, collections }: MegaMen
                   src="https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=800&auto=format&fit=crop"
                   alt="Imunita a Zdravie"
                   fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />
@@ -69,6 +70,7 @@ export const MegaMenu = ({ isOpen, onClose, onMouseEnter, collections }: MegaMen
                   src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=800&auto=format&fit=crop"
                   alt="Krása a Vitalita"
                   fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />
@@ -81,6 +83,7 @@ export const MegaMenu = ({ isOpen, onClose, onMouseEnter, collections }: MegaMen
                   src="https://images.unsplash.com/photo-1550831107-1553da8c8464?q=80&w=800&auto=format&fit=crop"
                   alt="Energia a Spánok"
                   fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-300" />

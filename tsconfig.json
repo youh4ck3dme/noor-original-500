@@ -29,7 +29,7 @@
       ]
     },
     "types": [
-      "vitest/globals"
+      "node"
     ]
   },
   "include": [
@@ -37,14 +37,15 @@
     "vitest-env.d.ts",
     "app/**/*.ts",
     "app/**/*.tsx",
-    "tests/**/*.ts",
-    "tests/**/*.tsx",
-    "e2e/**/*.ts",
     "scripts/**/*.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "tests",
+    "e2e"
   ]
 }

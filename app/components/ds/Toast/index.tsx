@@ -1,7 +1,7 @@
 'use client';
 
 import { clsx } from 'clsx';
-import React, { useCallback, useState, createContext, useContext, useEffect } from 'react';
+import React, { useCallback, useState, createContext, useContext, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -34,9 +34,25 @@ const accent = {
   error: 'text-gm-primary',
   info: 'text-gm-text-muted'
 };
+function subscribeToMounted() {
+  return () => {};
+}
+
+function getMountedSnapshot() {
+  return true;
+}
+
+function getMountedServerSnapshot() {
+  return false;
+}
+
 export const ToastProvider = ({ children }: {children: React.ReactNode;}) => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    subscribeToMounted,
+    getMountedSnapshot,
+    getMountedServerSnapshot,
+  );
   const remove = useCallback((id: number) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
@@ -56,9 +72,6 @@ export const ToastProvider = ({ children }: {children: React.ReactNode;}) => {
     },
     [remove]
   );
-  useEffect(() => {
-    setMounted(true);
-  }, []);
   return (
     <ToastContext.Provider
       value={{

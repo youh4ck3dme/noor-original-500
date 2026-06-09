@@ -51,11 +51,11 @@ Pre každý riadok v Admin UI:
 
 ## Príklad pre Vercel (aktuálna produkcia)
 
-Doména: `growmedicanextjs.vercel.app`  
+Doména: `grow.nexify-studio.tech`  
 Secret: hodnota z `storefront/docs/FIREBASE_AGENT_BLUEPRINT.secrets.env`
 
 ```
-https://growmedicanextjs.vercel.app/api/revalidate?secret=<SHOPIFY_REVALIDATION_SECRET>
+https://grow.nexify-studio.tech/api/revalidate?secret=<SHOPIFY_REVALIDATION_SECRET>
 ```
 
 *(Rovnaká URL pre všetkých 6 webhookov — líši sa len Event.)*
@@ -65,7 +65,7 @@ https://growmedicanextjs.vercel.app/api/revalidate?secret=<SHOPIFY_REVALIDATION_
 ## Príklad pre Firebase / custom doména
 
 ```
-https://shop.growmedica.sk/api/revalidate?secret=<SHOPIFY_REVALIDATION_SECRET>
+https://grow.nexify-studio.tech/api/revalidate?secret=<SHOPIFY_REVALIDATION_SECRET>
 ```
 
 Po zmene domény **updatni URL** u všetkých 6 webhookov + `NEXT_PUBLIC_SITE_URL` + redeploy.

@@ -16,6 +16,7 @@
                 "test:ai:benchmark": "vitest run app/lib/ai/benchmark.test.ts",
                 "test:legacy": "vitest run tests",
                 "test:e2e": "playwright test",
+                "test:e2e:auth": "E2E_RUN_AUTH=1 playwright test --grep @auth",
                 "test:e2e:ui": "playwright test --ui",
                 "test:e2e:report": "playwright show-report",
                 "test:all": "npm test && npm run test:e2e",
@@ -28,7 +29,17 @@
                 "verify:push-env": "node scripts/verify-push-env.mjs",
                 "create:favicon": "node scripts/create-favicon.mjs",
                 "check:firestore": "node scripts/check-firestore.mjs",
-                "check:shopify": "node scripts/check-shopify-products.mjs"
+                "check:shopify": "node scripts/check-shopify-products.mjs",
+                "verify:shopify-admin": "node scripts/verify-shopify-admin.mjs",
+                "verify:shopify-admin-scopes": "node scripts/check-shopify-admin-scopes.mjs",
+                "verify:shopify-metafields": "node scripts/verify-shopify-metafields.mjs",
+                "verify:shopify-customer-auth": "node scripts/verify-shopify-customer-auth.mjs",
+                "preflight:firebase": "node scripts/preflight-firebase.mjs",
+                "sync:firebase-env": "node scripts/sync-firebase-apphosting-env.mjs",
+                "push:vercel-env": "node scripts/push-vercel-env.mjs",
+                "deploy:firebase": "firebase deploy --only apphosting:noor-original-500",
+                "deploy:production": "node scripts/deploy-production.mjs",
+                "seed:product-metafields": "node scripts/seed-product-metafields.mjs"
         },
         "dependencies": {
                 "@google/generative-ai": "^0.24.1",

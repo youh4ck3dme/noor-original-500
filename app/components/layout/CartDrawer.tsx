@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Image from 'next/image';
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { LiquidButton } from '../ui/LiquidButton';
 interface CartDrawerProps {
@@ -44,9 +45,11 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
         <div className="flex-1 overflow-y-auto p-6">
           <div className="flex gap-4 border-b border-gm-border pb-6">
             <div className="w-24 h-32 bg-gm-bg-soft rounded-gm-sm overflow-hidden flex-shrink-0">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=400&auto=format&fit=crop"
                 alt="HydraSilk Cleanser"
+                width={96}
+                height={128}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -76,9 +79,11 @@ export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
           <div className="mt-8">
             <h4 className="text-sm font-medium text-gm-text mb-4">Mohlo by sa vám páčiť</h4>
             <div className="bg-gm-bg-soft p-4 rounded-gm-md flex items-center gap-4">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?q=80&w=200&auto=format&fit=crop"
                 alt="Moisturizer"
+                width={64}
+                height={64}
                 className="w-16 h-16 object-cover rounded-gm-sm"
               />
               <div className="flex-1">

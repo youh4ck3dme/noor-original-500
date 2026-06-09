@@ -79,9 +79,13 @@ export const SiteHeader = ({ collections }: SiteHeaderProps) => {
             >
               <Search className="w-5 h-5" />
             </button>
-            <button className="text-gm-text hover:text-gm-primary transition-colors hidden md:block" aria-label="Účet">
+            <Link
+              href="/ucet"
+              className="text-gm-text hover:text-gm-primary transition-colors hidden md:block"
+              aria-label="Môj účet"
+            >
               <User className="w-5 h-5" />
-            </button>
+            </Link>
             <button
               className="text-gm-text hover:text-gm-primary transition-colors relative"
               onClick={openCart}

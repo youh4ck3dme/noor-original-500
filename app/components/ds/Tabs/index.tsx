@@ -1,6 +1,7 @@
 'use client';
 
 import { clsx } from 'clsx';
+import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState, useId } from 'react';
 export interface TabItem {
   id: string;
@@ -66,16 +67,23 @@ export const Tabs = ({
 
         })}
       </div>
-      {activeItem &&
-      <div
-        role="tabpanel"
-        id={`${baseId}-panel-${activeItem.id}`}
-        aria-labelledby={`${baseId}-tab-${activeItem.id}`}
-        className="pt-5 text-gm-text-muted font-light leading-relaxed animate-fade-in">
-        
-          {activeItem.content}
-        </div>
-      }
+      <AnimatePresence mode="wait">
+        {activeItem && (
+          <motion.div
+            key={activeItem.id}
+            role="tabpanel"
+            id={`${baseId}-panel-${activeItem.id}`}
+            aria-labelledby={`${baseId}-tab-${activeItem.id}`}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.28, ease: 'easeOut' }}
+            className="pt-5 text-gm-text-muted font-light leading-relaxed"
+          >
+            {activeItem.content}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>);
 
 };
