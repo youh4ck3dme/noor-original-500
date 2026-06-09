@@ -69,6 +69,7 @@ Otvor http://localhost:3001
 | `Cannot find module 'autoprefixer'` | `npm install` (je v devDependencies) |
 | Turbopack cache error | `rm -rf .next && npm run dev` |
 | Shopify env not set | Skontroluj `.env.local` a `SHOPIFY_API_ENDPOINT_URL` |
+| TS: `node_modules/.pnpm/@types/...` not found | `rm -rf node_modules && npm ci`, potom **TypeScript: Restart TS Server** |
 
 ## Štruktúra
 
