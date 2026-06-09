@@ -18,7 +18,7 @@ const SHOPIFY_API_ENDPOINT_URL = requireShopifyEnv(
   process.env.SHOPIFY_API_ENDPOINT_URL,
 );
 
-async function shopifyFetch<T>(
+export async function shopifyFetch<T>(
   query: string,
   variables: Record<string, unknown> = {},
   tags: string[] = []
@@ -82,10 +82,29 @@ export type ShopifyProductVariant = {
   selectedOptions: Array<{ name: string; value: string }>;
 };
 
+type ShopifyMetafieldNode = {
+  key: string;
+  value: string;
+  type: string;
+  reference?: {
+    type?: string;
+    fields?: Array<{ key: string; value: string }>;
+  } | null;
+  references?: {
+    edges: Array<{
+      node: {
+        type?: string;
+        fields?: Array<{ key: string; value: string }>;
+      };
+    }>;
+  } | null;
+};
+
 export type ShopifyProductNode = {
   id: string;
   title: string;
   handle: string;
+  tags?: string[];
   availableForSale?: boolean;
   descriptionHtml?: string;
   priceRange: {
@@ -101,6 +120,7 @@ export type ShopifyProductNode = {
   images: {
     edges: Array<{ node: ShopifyImageNode }>;
   };
+  metafields?: ShopifyMetafieldNode[];
 };
 
 export type ShopifyCollectionDetail = ShopifyCollectionNode & {
@@ -158,6 +178,7 @@ const productsQuery = `
           id
           title
           handle
+          tags
           availableForSale
           priceRange {
             minVariantPrice {
@@ -272,8 +293,43 @@ const productByHandleQuery = `
       id
       title
       handle
+      tags
       availableForSale
       descriptionHtml
+      metafields(
+        identifiers: [
+          { namespace: "custom", key: "composition" }
+          { namespace: "custom", key: "dosage" }
+          { namespace: "custom", key: "lab_tests" }
+          { namespace: "custom", key: "product_faq" }
+        ]
+      ) {
+        key
+        value
+        type
+        reference {
+          ... on Metaobject {
+            type
+            fields {
+              key
+              value
+            }
+          }
+        }
+        references(first: 10) {
+          edges {
+            node {
+              ... on Metaobject {
+                type
+                fields {
+                  key
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
       priceRange {
         minVariantPrice {
           amount

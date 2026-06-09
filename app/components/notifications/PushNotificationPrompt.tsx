@@ -112,7 +112,10 @@ export function PushNotificationPrompt() {
   }
 
   return (
-    <div className="fixed bottom-24 left-4 z-40 max-w-sm rounded-xl border border-neutral-200 bg-white p-4 shadow-lg">
+    <div
+      data-testid="push-prompt"
+      className="fixed bottom-24 left-4 z-40 max-w-sm rounded-xl border border-neutral-200 bg-white p-4 shadow-lg"
+    >
       <div className="flex items-start gap-3">
         <div className="rounded-full bg-emerald-50 p-2 text-emerald-700">
           <Bell className="h-5 w-5" />
@@ -137,6 +140,7 @@ export function PushNotificationPrompt() {
             {state !== 'denied' && (
               <button
                 type="button"
+                data-testid="push-allow"
                 onClick={() => void handleSubscribe()}
                 disabled={state === 'loading'}
                 className="rounded-lg bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-60"
@@ -146,6 +150,7 @@ export function PushNotificationPrompt() {
             )}
             <button
               type="button"
+              data-testid="push-dismiss"
               onClick={handleDismiss}
               className="rounded-lg border border-neutral-200 px-3 py-1.5 text-sm text-neutral-700"
             >

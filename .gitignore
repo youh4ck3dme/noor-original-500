@@ -92,6 +92,7 @@ dist
 .env
 .env.local
 .env.*.local
+.firebase-env-paste.txt
 !.env.example
 
 # Accidental pnpm artifacts (project uses npm)
