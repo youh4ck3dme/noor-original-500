@@ -16,8 +16,6 @@ jobs:
       SHOPIFY_STOREFRONT_ACCESS_TOKEN: test-token
       SHOPIFY_REVALIDATION_SECRET: test-secret
       NEXT_PUBLIC_SITE_URL: http://localhost:3001
-      GEMINI_API_KEY: test-gemini
-      MISTRAL_API_KEY: test-mistral
       PUSH_SEND_SECRET: test-push-secret
 
     steps:
