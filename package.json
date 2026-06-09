@@ -2,8 +2,9 @@
         "name": "next-js-app",
         "version": "0.1.0",
         "private": true,
+        "packageManager": "npm@11.14.1",
         "scripts": {
-                "dev": "next dev",
+                "dev": "next dev -p 3001",
                 "build": "next build",
                 "start": "next start",
                 "lint": "next lint"

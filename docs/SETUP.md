@@ -36,7 +36,7 @@ Potom doplni lokálne (ak chýbajú):
 # NOOR theme
 NEXT_PUBLIC_DEFAULT_THEME=noor
 NEXT_PUBLIC_HIDE_THEME_SWITCHER=1
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SITE_URL=http://localhost:3001
 
 # Firebase — z Firebase Console → Project settings → Your apps
 NEXT_PUBLIC_FIREBASE_API_KEY=
@@ -59,7 +59,7 @@ Skopíruj `.env.example` → `.env.local` a vyplň hodnoty.
 npm run dev
 ```
 
-Otvor http://localhost:3000
+Otvor http://localhost:3001
 
 ## Časté problémy
 
