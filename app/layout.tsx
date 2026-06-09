@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { AiChatWidget } from './components/chat/AiChatWidget';
 import { CartDrawerWrapper } from './components/layout/CartDrawerWrapper';
@@ -8,11 +8,16 @@ import '../src/index.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
+export const viewport: Viewport = {
+  themeColor: '#146e6d',
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   title: 'GrowMedica',
   description: 'Prémiové prírodné doplnky stravy',
   manifest: '/site.webmanifest',
-  themeColor: '#146e6d',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -26,12 +31,6 @@ export const metadata: Metadata = {
     ],
     apple: [
       { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
-    other: [
-      {
-        rel: 'mask-icon',
-        url: '/safari-pinned-tab.svg', // Fallback if exists, but we'll stick to what we have
-      },
     ],
   },
 };
