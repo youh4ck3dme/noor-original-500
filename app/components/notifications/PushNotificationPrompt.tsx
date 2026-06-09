@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Bell, X } from 'lucide-react';
 import {
+  ensurePushServiceWorker,
   getFcmToken,
   isFirebaseMessagingSupported,
   onForegroundMessage,
@@ -65,6 +66,9 @@ export function PushNotificationPrompt() {
         if (!cancelled) setState('denied');
         return;
       }
+
+      // Pre-register SW so PushManager.subscribe does not race on first click.
+      void ensurePushServiceWorker().catch(() => {});
 
       if (!cancelled) setState('prompt');
     })();

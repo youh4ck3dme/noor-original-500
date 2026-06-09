@@ -34,27 +34,55 @@ export async function shopifyAdminFetch<T>(
     process.env.SHOPIFY_ADMIN_ACCESS_TOKEN,
   );
 
-  const response = await fetch(getAdminApiUrl(), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': token,
-    },
-    body: JSON.stringify({ query, variables }),
-  });
+  const MAX_RETRIES = 3;
+  let lastError: any;
 
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(`Shopify Admin API request failed: ${response.statusText}\n${errorBody}`);
+  for (let i = 0; i <= MAX_RETRIES; i++) {
+    try {
+      const response = await fetch(getAdminApiUrl(), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Access-Token': token,
+          'User-Agent': 'noor-original-app/1.0',
+        },
+        body: JSON.stringify({ query, variables }),
+        // @ts-ignore
+        keepalive: false,
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Shopify Admin API request failed: ${response.statusText}\n${errorBody}`);
+      }
+
+      const json = await response.json();
+      if (json.errors) {
+        console.error('Shopify Admin GraphQL Errors:', json.errors);
+        throw new Error('An error occurred while fetching data from Shopify Admin API.');
+      }
+
+      return json.data as T;
+    } catch (error: any) {
+      lastError = error;
+      const errorMsg = error.message || '';
+      const isSocketError = error.code === 'UND_ERR_SOCKET' || 
+                           errorMsg.includes('socket') || 
+                           errorMsg.includes('fetch failed') ||
+                           errorMsg.includes('other side closed');
+      
+      if (isSocketError && i < MAX_RETRIES) {
+        console.warn(`Shopify Admin fetch socket error, retrying (${i + 1}/${MAX_RETRIES})... ${errorMsg}`);
+        await new Promise(resolve => setTimeout(resolve, 200 * (i + 1)));
+        continue;
+      }
+      
+      console.error('Shopify Admin fetch failed:', error);
+      throw error;
+    }
   }
-
-  const json = await response.json();
-  if (json.errors) {
-    console.error('Shopify Admin GraphQL Errors:', json.errors);
-    throw new Error('An error occurred while fetching data from Shopify Admin API.');
-  }
-
-  return json.data as T;
+  
+  throw lastError;
 }
 
 export function isShopifyAdminConfigured(): boolean {

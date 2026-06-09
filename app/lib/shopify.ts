@@ -25,33 +25,56 @@ export async function shopifyFetch<T>(
 ): Promise<T> {
   noStore(); // Opt-out of caching for all fetches by default
 
-  try {
-    const response = await fetch(SHOPIFY_API_ENDPOINT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-      },
-      body: JSON.stringify({ query, variables }),
-      next: { tags }, // Add cache tags for revalidation
-    });
+  const MAX_RETRIES = 3;
+  let lastError: any;
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(`Shopify API request failed: ${response.statusText}\n${errorBody}`);
+  for (let i = 0; i <= MAX_RETRIES; i++) {
+    try {
+      const response = await fetch(SHOPIFY_API_ENDPOINT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+          'User-Agent': 'noor-original-app/1.0',
+        },
+        body: JSON.stringify({ query, variables }),
+        next: { tags }, // Add cache tags for revalidation
+        // @ts-ignore - Disable keepalive to avoid socket closure issues
+        keepalive: false,
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Shopify API request failed: ${response.statusText}\n${errorBody}`);
+      }
+
+      const json = await response.json();
+      if (json.errors) {
+        console.error('Shopify GraphQL Errors:', json.errors);
+        throw new Error('An error occurred while fetching data from Shopify.');
+      }
+
+      return json.data;
+    } catch (error: any) {
+      lastError = error;
+      const errorMsg = error.message || '';
+      const isSocketError = error.code === 'UND_ERR_SOCKET' || 
+                           errorMsg.includes('socket') || 
+                           errorMsg.includes('fetch failed') ||
+                           errorMsg.includes('other side closed');
+      
+      if (isSocketError && i < MAX_RETRIES) {
+        console.warn(`Shopify fetch socket error, retrying (${i + 1}/${MAX_RETRIES})... ${errorMsg}`);
+        await new Promise(resolve => setTimeout(resolve, 200 * (i + 1)));
+        continue;
+      }
+      
+      console.error('Fetch to Shopify failed:', error);
+      throw error;
     }
-
-    const json = await response.json();
-    if (json.errors) {
-      console.error('Shopify GraphQL Errors:', json.errors);
-      throw new Error('An error occurred while fetching data from Shopify.');
-    }
-
-    return json.data;
-  } catch (error) {
-    console.error('Fetch to Shopify failed:', error);
-    throw error;
   }
+  
+  throw lastError;
 }
 
 // API Functions for data fetching

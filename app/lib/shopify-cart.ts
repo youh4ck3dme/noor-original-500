@@ -102,6 +102,7 @@ async function cartFetch<T>(query: string, variables: Record<string, unknown> = 
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      Connection: 'close',
       'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_ACCESS_TOKEN,
     },
     body: JSON.stringify({ query, variables }),

@@ -37,6 +37,12 @@ values.set(
   `${PRODUCTION_URL}/api/auth/shopify/callback`,
 );
 
+// Normalize Shopify endpoint — trailing slash causes intermittent UND_ERR_SOCKET on Vercel.
+const endpoint = values.get('SHOPIFY_API_ENDPOINT_URL');
+if (endpoint) {
+  values.set('SHOPIFY_API_ENDPOINT_URL', endpoint.replace(/\/+$/, ''));
+}
+
 const envs = ['production', 'preview', 'development'];
 let ok = 0;
 let fail = 0;
