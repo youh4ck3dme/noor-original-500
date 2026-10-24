@@ -1,0 +1,22 @@
+{
+  "apphosting": [
+    {
+      "backendId": "noor-original-500",
+      "rootDir": ".",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        ".next",
+        "playwright-report",
+        "test-results",
+        "workflows",
+        "tests",
+        "e2e",
+        ".env.local",
+        ".firebase-service-account.json"
+      ]
+    }
+  ]
+}

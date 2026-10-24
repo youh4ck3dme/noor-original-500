@@ -6,7 +6,6 @@ import {
   formatBenchmarkResults,
   DEFAULT_BENCHMARK_PROMPTS,
 } from './benchmark';
-import type { ChatMessage } from './types';
 
 const {
   mockSendMessage,
@@ -43,10 +42,6 @@ function workflowResponse(text: string) {
     JSON.stringify({ result: { message: text } }),
     { status: 200, headers: { 'content-type': 'application/json' } },
   );
-}
-
-function makeChatMessage(content: string): ChatMessage[] {
-  return [{ role: 'user', content }];
 }
 
 describe('benchmark', () => {
@@ -188,10 +183,7 @@ describe('benchmark', () => {
       vi.stubEnv('GEMINI_API_KEY', 'gemini-key');
       vi.stubEnv('MISTRAL_API_KEY', 'mistral-key');
 
-      // Mock fetch to return quickly for Mistral
-      let mistralCallTime = 0;
       const fastFetch = vi.fn(async () => {
-        mistralCallTime = Date.now();
         await new Promise((resolve) => setTimeout(resolve, 10));
         return mistralResponse('Quick response');
       });

@@ -7,12 +7,12 @@ Cesta: Settings → Notifications → Webhooks → Create webhook
 
 ---
 
-## Vercel produkcia (growmedicanextjs)
+## Produkcia (grow.nexify-studio.tech)
 
 **Webhook URL** (rovnaká pre všetkých 6 eventov):
 
 ```
-https://growmedicanextjs.vercel.app/api/revalidate?secret=mlRv2LSMK6Fj40ka918tlwDqi65WFzPLrHQghfEuo9h9PLQzGXU24cBcSIImRmRQ
+https://grow.nexify-studio.tech/api/revalidate?secret=mlRv2LSMK6Fj40ka918tlwDqi65WFzPLrHQghfEuo9h9PLQzGXU24cBcSIImRmRQ
 ```
 
 ### 6× Create webhook
@@ -30,24 +30,16 @@ Webhook API version: **2025-01**
 
 ---
 
-## Firebase / NOOR (po deployi — zmeň doménu)
+## Legacy (nezapínať)
 
-NOOR demo Vercel:
-```
-https://growmedica-noor-demo.vercel.app/api/revalidate?secret=mlRv2LSMK6Fj40ka918tlwDqi65WFzPLrHQghfEuo9h9PLQzGXU24cBcSIImRmRQ
-```
-
-Custom NOOR doména (keď DNS bude hotové):
-```
-https://noor.growmedica.sk/api/revalidate?secret=mlRv2LSMK6Fj40ka918tlwDqi65WFzPLrHQghfEuo9h9PLQzGXU24cBcSIImRmRQ
-```
+Staré Vercel URL — nahradené produkciou `grow.nexify-studio.tech`.
 
 ---
 
 ## Rýchly test
 
 ```bash
-curl -i -X POST "https://growmedicanextjs.vercel.app/api/revalidate?secret=mlRv2LSMK6Fj40ka918tlwDqi65WFzPLrHQghfEuo9h9PLQzGXU24cBcSIImRmRQ" \
+curl -i -X POST "https://grow.nexify-studio.tech/api/revalidate?secret=mlRv2LSMK6Fj40ka918tlwDqi65WFzPLrHQghfEuo9h9PLQzGXU24cBcSIImRmRQ" \
   -H "Content-Type: application/json" \
   -H "x-shopify-topic: products/update" \
   -d '{"handle":"test"}'

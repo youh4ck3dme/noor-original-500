@@ -18,40 +18,62 @@ const SHOPIFY_API_ENDPOINT_URL = requireShopifyEnv(
   process.env.SHOPIFY_API_ENDPOINT_URL,
 );
 
-async function shopifyFetch<T>(
+export async function shopifyFetch<T>(
   query: string,
   variables: Record<string, unknown> = {},
   tags: string[] = []
 ): Promise<T> {
   noStore(); // Opt-out of caching for all fetches by default
 
-  try {
-    const response = await fetch(SHOPIFY_API_ENDPOINT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-      },
-      body: JSON.stringify({ query, variables }),
-      next: { tags }, // Add cache tags for revalidation
-    });
+  const MAX_RETRIES = 3;
+  let lastError: unknown;
 
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(`Shopify API request failed: ${response.statusText}\n${errorBody}`);
+  for (let i = 0; i <= MAX_RETRIES; i++) {
+    try {
+      const response = await fetch(SHOPIFY_API_ENDPOINT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+          'User-Agent': 'noor-original-app/1.0',
+        },
+        body: JSON.stringify({ query, variables }),
+        next: { tags }, // Add cache tags for revalidation
+        keepalive: false,
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`Shopify API request failed: ${response.statusText}\n${errorBody}`);
+      }
+
+      const json = await response.json();
+      if (json.errors) {
+        console.error('Shopify GraphQL Errors:', json.errors);
+        throw new Error('An error occurred while fetching data from Shopify.');
+      }
+
+      return json.data;
+    } catch (error: unknown) {
+      lastError = error;
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      const isSocketError = (error && typeof error === 'object' && 'code' in error && error.code === 'UND_ERR_SOCKET') || 
+                           errorMsg.includes('socket') || 
+                           errorMsg.includes('fetch failed') ||
+                           errorMsg.includes('other side closed');
+      
+      if (isSocketError && i < MAX_RETRIES) {
+        console.warn(`Shopify fetch socket error, retrying (${i + 1}/${MAX_RETRIES})... ${errorMsg}`);
+        await new Promise(resolve => setTimeout(resolve, 200 * (i + 1)));
+        continue;
+      }
+      
+      console.error('Fetch to Shopify failed:', error);
+      throw error;
     }
-
-    const json = await response.json();
-    if (json.errors) {
-      console.error('Shopify GraphQL Errors:', json.errors);
-      throw new Error('An error occurred while fetching data from Shopify.');
-    }
-
-    return json.data;
-  } catch (error) {
-    console.error('Fetch to Shopify failed:', error);
-    throw error;
   }
+  
+  throw lastError;
 }
 
 // API Functions for data fetching
@@ -82,10 +104,29 @@ export type ShopifyProductVariant = {
   selectedOptions: Array<{ name: string; value: string }>;
 };
 
+type ShopifyMetafieldNode = {
+  key: string;
+  value: string;
+  type: string;
+  reference?: {
+    type?: string;
+    fields?: Array<{ key: string; value: string }>;
+  } | null;
+  references?: {
+    edges: Array<{
+      node: {
+        type?: string;
+        fields?: Array<{ key: string; value: string }>;
+      };
+    }>;
+  } | null;
+};
+
 export type ShopifyProductNode = {
   id: string;
   title: string;
   handle: string;
+  tags?: string[];
   availableForSale?: boolean;
   descriptionHtml?: string;
   priceRange: {
@@ -101,6 +142,7 @@ export type ShopifyProductNode = {
   images: {
     edges: Array<{ node: ShopifyImageNode }>;
   };
+  metafields?: ShopifyMetafieldNode[];
 };
 
 export type ShopifyCollectionDetail = ShopifyCollectionNode & {
@@ -158,6 +200,7 @@ const productsQuery = `
           id
           title
           handle
+          tags
           availableForSale
           priceRange {
             minVariantPrice {
@@ -272,8 +315,43 @@ const productByHandleQuery = `
       id
       title
       handle
+      tags
       availableForSale
       descriptionHtml
+      metafields(
+        identifiers: [
+          { namespace: "custom", key: "composition" }
+          { namespace: "custom", key: "dosage" }
+          { namespace: "custom", key: "lab_tests" }
+          { namespace: "custom", key: "product_faq" }
+        ]
+      ) {
+        key
+        value
+        type
+        reference {
+          ... on Metaobject {
+            type
+            fields {
+              key
+              value
+            }
+          }
+        }
+        references(first: 10) {
+          edges {
+            node {
+              ... on Metaobject {
+                type
+                fields {
+                  key
+                  value
+                }
+              }
+            }
+          }
+        }
+      }
       priceRange {
         minVariantPrice {
           amount

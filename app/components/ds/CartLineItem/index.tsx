@@ -1,6 +1,7 @@
 'use client';
 
 import { clsx } from 'clsx';
+import Image from 'next/image';
 import React from 'react';
 import { Trash2Icon } from 'lucide-react';
 
@@ -31,9 +32,11 @@ export const CartLineItem = ({
     <div className={clsx('flex gap-4 py-4', className)}>
       <div className="w-20 h-24 flex-shrink-0 rounded-gm-md overflow-hidden bg-gm-bg-soft">
         {item.image ?
-        <img
+        <Image
           src={item.image}
           alt={item.title}
+          width={80}
+          height={96}
           className="w-full h-full object-cover" /> :
 
 

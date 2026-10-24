@@ -81,6 +81,82 @@ npm run test:legacy  # stará šablóna v tests/ (nie je súčasť default CI)
 | Shopify env not set | Skontroluj `.env.local` a `SHOPIFY_API_ENDPOINT_URL` |
 | TS: `node_modules/.pnpm/@types/...` not found | `rm -rf node_modules && npm ci`, potom **TypeScript: Restart TS Server** |
 
+## Shopify Custom App (Admin API)
+
+Potrebné pre zápis produktov (AI optimalizácia), prepojenie zákazníkov a objednávky.
+
+1. Shopify Admin → **Settings → Apps → Develop apps** → Create an app (napr. `GrowMedica Headless Admin`)
+2. **Configure Admin API scopes:**
+   - `read_products`, `write_products`
+   - `read_customers`, `read_orders`
+3. **Install app** → skopíruj **Admin API access token** (zobrazí sa len raz)
+4. Do `.env.local`:
+
+```env
+SHOPIFY_ADMIN_ACCESS_TOKEN=shpat_...
+# Voliteľné — inak sa zostaví z SHOPIFY_STORE_DOMAIN + SHOPIFY_API_VERSION
+SHOPIFY_ADMIN_API_URL=https://{store}.myshopify.com/admin/api/2025-01/graphql.json
+ADMIN_EMAILS=tvoj@email.com
+```
+
+5. Overenie:
+
+```bash
+npm run verify:shopify-admin
+npm run verify:shopify-metafields
+```
+
+## Shopify Customer Account API (OAuth)
+
+Headless kanál — prihlásenie zákazníkov a objednávky cez Customer Account API (nie Admin API).
+
+### Kde kliknúť v Shopify Admin (GrowMedica)
+
+1. Otvor: **https://admin.shopify.com/store/tn43yx-0k/headless**
+   - ak link nefunguje: Admin → **Sales channels** → **Headless**
+2. Klikni na headless storefront (app s Client ID `899f4e68-4753-4e7f-b205-694b5a226545`)
+3. Sekcia **Customer Account API** → **Application setup** (alebo **Settings**)
+4. Pole **Allowed redirection URL(s)** / **Callback URL(s)** — pridaj **obe** URL (presne, bez `/` na konci):
+
+| Prostredie | Callback URL |
+|------------|--------------|
+| Produkcia | `https://grow.nexify-studio.tech/api/auth/shopify/callback` |
+
+Shopify **neakceptuje** `http://localhost` — lokálny vývoj cez ngrok alebo test na Vercel.
+
+**Callback URI = len** `.../api/auth/shopify/callback` (nie `/login`, bez `?next=`).
+
+5. **Save** → počkaj ~1 min → otestuj `http://localhost:3001/api/auth/shopify/login?next=/ucet`
+
+Chyba *„Parameter redirect_uri sa nezhoduje“* = callback v Shopify **nie je** identický s URL, ktorú posiela app. Kód je v poriadku; chýba registrácia v Headless UI.
+
+**Pozor:** callback patrí do **Headless → Customer Account API**, nie do Custom App (Admin API v Settings → Apps → Develop apps).
+
+### Env a overenie
+
+1. Skopíruj **Client ID** a **Client secret** z Application setup
+2. Do `.env.local`:
+
+```env
+SHOPIFY_CUSTOMER_ACCOUNT_SHOP_ID=104292483406
+SHOPIFY_CUSTOMER_ACCOUNT_AUTHORIZE_URL=https://shopify.com/authentication/104292483406/oauth/authorize
+SHOPIFY_CUSTOMER_ACCOUNT_TOKEN_URL=https://shopify.com/authentication/104292483406/oauth/token
+SHOPIFY_CUSTOMER_ACCOUNT_LOGOUT_URL=https://shopify.com/authentication/104292483406/logout
+SHOPIFY_CUSTOMER_ACCOUNT_GRAPHQL_URL=https://shopify.com/104292483406/account/customer/api/2026-04/graphql
+SHOPIFY_CUSTOMER_ACCOUNT_REDIRECT_URI=http://localhost:3001/api/auth/shopify/callback
+SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_ID=
+SHOPIFY_CUSTOMER_ACCOUNT_CLIENT_SECRET=
+```
+
+5. Overenie a test v prehliadači:
+
+```bash
+npm run verify:shopify-customer-auth
+# otvor http://localhost:3001/api/auth/shopify/login?next=/ucet
+```
+
+Tlačidlo **Prihlásiť cez Shopify** je na `/ucet/prihlasenie` a v záložke **Moje objednávky**.
+
 ## AI chat (Gemini → Mistral fallback)
 
 Portované z `growmedicanextjs` (farmaceut persona + chat UI), s Gemini ako primárnym providerom.
@@ -167,6 +243,31 @@ curl -X POST http://localhost:3001/api/push/send \
 6. Voliteľne: Firebase Console → Messaging → Send test message (FCM token z DevTools Network po subscribe).
 
 **Bezpečnosť:** VAPID private key a service account JSON nikdy necommituj. Po úniku rotuj kľúče vo Firebase Console.
+
+## Testovanie
+
+```bash
+npm test                 # unit testy (Vitest)
+npm run test:e2e         # E2E smoke (bez Firebase loginu)
+npm run test:e2e:auth    # plná zákaznícka cesta (@auth, credentials z .env.local)
+npm run test:all         # unit + E2E smoke
+```
+
+Push E2E (`e2e/push-notifications.spec.ts`) testuje banner, dismiss a API subscribe/send. Pred manuálnym FCM testom:
+
+```bash
+npm run verify:push-env
+```
+
+E2E premenné v `.env.local` (gitignored):
+
+```env
+E2E_AUTH=1
+E2E_TEST_EMAIL=...
+E2E_TEST_PASSWORD=...
+```
+
+Pozri [`app/lib/ai/testovaciucet.md`](../app/lib/ai/testovaciucet.md) a [`docs/FIREBASE_CRM.md`](FIREBASE_CRM.md).
 
 ## Štruktúra
 

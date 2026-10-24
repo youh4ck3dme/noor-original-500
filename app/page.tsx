@@ -1,3 +1,4 @@
+import { AIRecommendation } from './components/account/AIRecommendation';
 import { ProductGrid } from './components/commerce/ProductGrid';
 import { SectionHeading } from './components/ds/SectionHeading';
 import { StorePageShell } from './components/layout/StorePageShell';
@@ -25,6 +26,9 @@ export default async function Home() {
           Skontroluj Shopify pripojenie a kolekciu v administrácii.
         </p>
       )}
+      <div className="mt-20">
+        <AIRecommendation />
+      </div>
     </StorePageShell>
   );
 }

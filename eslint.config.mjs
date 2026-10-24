@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
     'node_modules/**',
     'workflows/**/.venv/**',
     'coverage/**',
+    'playwright-report/**',
+    'test-results/**',
     'dist/**',
     'src/**',
     'design-system/**',

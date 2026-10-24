@@ -30,3 +30,24 @@ export interface StorefrontNavItem {
   items?: StorefrontNavItem[];
   image?: StorefrontImage | null;
 }
+
+export interface StorefrontLabTest {
+  title: string;
+  labName: string;
+  testDate: string;
+  pdfUrl: string;
+}
+
+export interface StorefrontProductFaq {
+  id: string;
+  title: string;
+  content: string;
+}
+
+export interface StorefrontProductDetail {
+  composition: string | null;
+  dosage: string | null;
+  labTests: StorefrontLabTest[];
+  faq: StorefrontProductFaq[];
+  tags: string[];
+}

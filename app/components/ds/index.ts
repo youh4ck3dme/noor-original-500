@@ -1,5 +1,6 @@
 export * from './Accordion';
 export * from './AddToCartButton';
+export * from './AICommandBar';
 export * from './Badge';
 export * from './Breadcrumb';
 export * from './Button';
